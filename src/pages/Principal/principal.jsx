@@ -639,11 +639,6 @@ export default function AnimaSimplified() {
               <i className="fas fa-history"></i>
               <span>Historial</span>
             </button>
-
-            <button onClick={() => navigate('/configuracion')} className="nav-item">
-              <i className="fas fa-cog"></i>
-              <span>Configuración</span>
-            </button>
           </nav>
 
           <button onClick={handleLogout} className="logout-button">
