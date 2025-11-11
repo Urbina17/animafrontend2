@@ -13,7 +13,6 @@ import RecuperacionContrasena from "./pages/RecuperacionContrasena/RecuperacionC
 // Nuevas páginas
 import Historial from "./pages/Historial/historial";
 import Perfil from "./pages/Perfil/Perfil";
-import Configuracion from "./pages/Configuracion/Configuracion";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import SpotifyCallback from "./pages/SpotifyCallback"; // ✅ IMPORT CORRECTO
 
@@ -130,14 +129,6 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Perfil />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/configuracion"
-          element={
-            <ProtectedRoute>
-              <Configuracion />
             </ProtectedRoute>
           }
         />
