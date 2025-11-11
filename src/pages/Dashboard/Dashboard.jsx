@@ -63,19 +63,28 @@ export default function Dashboard() {
     // Calcular emoción dominante
     const emotionCounts = {};
     let totalConfianza = 0;
+    let confianzaValidas = 0;
 
     data.forEach(item => {
       const emotion = item.emocion_detectada;
+      const confianza = parseFloat(item.confianza);
+
       emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
-      totalConfianza += item.confianza || 0;
+
+      if (!isNaN(confianza)) {
+        totalConfianza += confianza;
+        confianzaValidas++;
+      }
     });
 
     const dominantEmotion = Object.keys(emotionCounts).reduce((a, b) => 
       emotionCounts[a] > emotionCounts[b] ? a : b
     );
 
-    // Promedio de confianza
-    const promedioConfianza = (totalConfianza / totalAnalisis).toFixed(1);
+    // Promedio de confianza (solo con valores válidos)
+    const promedioConfianza = confianzaValidas > 0
+      ? (totalConfianza / confianzaValidas).toFixed(1)
+      : "N/A";
 
     // Tendencia semanal (últimos 7 días)
     const last7Days = data.slice(0, 7);
@@ -93,6 +102,7 @@ export default function Dashboard() {
       distribucionEmociones: emotionCounts
     });
   };
+
 
   const processTrendData = (data) => {
     const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
@@ -167,10 +177,10 @@ export default function Dashboard() {
   const handleLogout = async () => {
     if (window.confirm("¿Estás seguro que deseas cerrar sesión?")) {
       try {
-        const token = localStorage.getItem("token");
-        
+        const token = localStorage.getItem("token") || localStorage.getItem("spotifyToken");
+
         if (token) {
-          await fetch("http://localhost:4000/auth/logout", {
+          await fetch("https://backendanima.onrender.com/auth/logout", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -179,17 +189,20 @@ export default function Dashboard() {
           });
         }
 
+        // Eliminar tokens locales
         localStorage.removeItem("token");
-        localStorage.removeItem("user");
         localStorage.removeItem("spotifyToken");
-        sessionStorage.clear();
+        sessionStorage.removeItem("token");
 
+        // Redirigir al login
         window.location.href = "/login";
-      } catch (err) {
-        console.error("Error al cerrar sesión:", err);
+      } catch (error) {
+        console.error("Error al cerrar sesión:", error);
+        alert("Hubo un problema al cerrar sesión. Intenta nuevamente.");
       }
     }
   };
+
 
   return (
     <div className="dashboard-container">
